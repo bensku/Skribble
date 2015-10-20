@@ -16,5 +16,5 @@ public interface EffectProcessor {
      * Checks and gets call task for this line.
      * @return Call task or empty optional
      */
-    Optional<CallTask> check();
+    Optional<CallTask> check(String line);
 }

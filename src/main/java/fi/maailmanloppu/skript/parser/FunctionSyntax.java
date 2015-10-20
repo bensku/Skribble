@@ -4,7 +4,7 @@ import java.util.List;
 
 
 /**
- * base syntax of function.
+ * Base syntax of function.
  * @author bensku
  *
  */

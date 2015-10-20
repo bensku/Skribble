@@ -2,6 +2,7 @@ package fi.maailmanloppu.skript.parser.skript;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import fi.maailmanloppu.skript.parser.CallTask;
 import fi.maailmanloppu.skript.parser.FunctionSyntax;
@@ -24,7 +25,21 @@ public class SkriptSyntax implements FunctionSyntax {
     
     @Override
     public List<CallTask> getTasks(String line) {
-        return null; //TODO Implement this
+        List<CallTask> taskList = new ArrayList<CallTask>();
+        for (EffectProcessor processor : processors) { //Pass line to all effect processors
+            Optional<CallTask> task = processor.check(line);
+            if (task.isPresent()) taskList.add(task.get());
+        }
+        
+        return taskList;
     }
-
+    
+    /**
+     * Adds effect processor to use list. Please do this before
+     * loading any scripts!
+     * @param processor
+     */
+    public void addEffectProcessor(EffectProcessor processor) {
+        processors.add(processor);
+    }
 }
