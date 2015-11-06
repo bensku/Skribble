@@ -2,6 +2,7 @@ package fi.maailmanloppu.skript.parser.skript;
 
 import java.util.List;
 
+import fi.maailmanloppu.skript.env.ExecuteContext;
 import fi.maailmanloppu.skript.parser.VariableType;
 
 /**
@@ -26,6 +27,10 @@ public class VariableFetcher {
         this.ref = ref;
         this.locals = locals;
         this.params = params;
+    }
+    
+    public VariableFetcher(String ref, ExecuteContext context) {
+        this(ref, context.getLocals(), context.getParams());
     }
     
     public String getCleanName() {

@@ -65,5 +65,22 @@ public class GenericEnvironment implements Environment, Opcodes {
         
         return true;
     }
+
+    @Override
+    public String getVisitingName() {
+        return null;
+    }
+
+    @Override
+    public boolean hasField(String name) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public Type getFieldType(String name) {
+        // TODO Auto-generated method stub
+        return null;
+    }
     
 }

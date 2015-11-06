@@ -3,6 +3,7 @@ package fi.maailmanloppu.skript.env;
 import java.util.Optional;
 
 import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.Type;
 
 /**
  * Script environment which stores variables and defines fields. Variables are
@@ -43,4 +44,10 @@ public interface Environment {
      * @return True if adding succeeded, false otherwise
      */
     boolean setToClass(ClassVisitor cw);
+    
+    boolean hasField(String name);
+    
+    Type getFieldType(String name);
+    
+    String getVisitingName();
 }
