@@ -13,6 +13,8 @@ import fi.maailmanloppu.skript.parser.VariableType;
 import fi.maailmanloppu.skript.parser.skript.EffectProcessor;
 import fi.maailmanloppu.skript.parser.skript.VariableFetcher;
 import fi.maailmanloppu.skript.util.LineParser;
+import fi.maailmanloppu.skript.util.MethodUtils;
+import fi.maailmanloppu.skript.value.ValueParser;
 
 public class SetVarProcessor implements EffectProcessor {
 
@@ -31,11 +33,13 @@ public class SetVarProcessor implements EffectProcessor {
     class SetVarTask implements CallTask, Opcodes {
         
         private String varId;
-        private Object newValue;
+        private String newValue;
+        private ValueParser parser;
         
-        public SetVarTask(String varId, Object newValue) {
+        public SetVarTask(String varId, String newValue) {
             this.varId = varId;
             this.newValue = newValue;
+            this.parser = Skript.getPlugin().getValueParser();
         }
 
         @Override
@@ -43,11 +47,13 @@ public class SetVarProcessor implements EffectProcessor {
             VariableFetcher varFetcher = new VariableFetcher(varId, context);
             String cleanName = varFetcher.getCleanName();
             Environment env = context.getEnvironment();
+            Object valueObj = Skript.getPlugin().getValueParser().parseValue(newValue);
+            
             switch (varFetcher.getType()) {
             case GLOBAL:
-                env.setVariable(cleanName, newValue);
+                env.setVariable(cleanName, valueObj);
             case LOCAL:
-                env.setVariable(cleanName, newValue); //TODO Need to fix this
+                env.setVariable(cleanName, valueObj); //TODO Need to fix this
             case PARAM:
                 break; //TODO Not possible currently...
             }
@@ -60,14 +66,17 @@ public class SetVarProcessor implements EffectProcessor {
             VariableFetcher varFetcher = new VariableFetcher(varId, context);
             String cleanName = varFetcher.getCleanName();
             Environment env = context.getEnvironment();
+            
+            parser.visitMethod(mv, parser.parseValue(newValue)); //Parse and put to stack
+            
             switch (varFetcher.getType()) {
             case GLOBAL:
                 
             case LOCAL:
-                mv.visitFieldInsn(PUTFIELD, env.getVisitingName(), cleanName,
+                mv.visitFieldInsn(PUTFIELD, env.getVisitingName(), context.getId() + cleanName,
                         env.getFieldType(cleanName).getDescriptor());
             case PARAM:
-                break; //TODO Not possible currently...
+                break; //TODO Not possible
             }
         }
     }

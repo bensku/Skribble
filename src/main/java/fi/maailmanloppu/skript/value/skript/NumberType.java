@@ -3,6 +3,9 @@ package fi.maailmanloppu.skript.value.skript;
 import java.util.List;
 import java.util.Optional;
 
+import org.objectweb.asm.MethodVisitor;
+
+import fi.maailmanloppu.skript.util.MethodUtils;
 import fi.maailmanloppu.skript.value.ValueType;
 
 public class NumberType implements ValueType {
@@ -30,6 +33,11 @@ public class NumberType implements ValueType {
     public List<Object> parseMultiValue(String code) {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    @Override
+    public void visitMethod(MethodVisitor mv, Object value) {
+        new MethodUtils(mv).putToStack(value);
     }
 
 }

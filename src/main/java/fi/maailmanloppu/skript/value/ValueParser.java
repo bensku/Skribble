@@ -3,6 +3,8 @@ package fi.maailmanloppu.skript.value;
 import java.util.List;
 import java.util.Optional;
 
+import org.objectweb.asm.MethodVisitor;
+
 /**
  * Values parser, which takes value declarations as Strings and creates
  * objects for them. Usually, this is done by getting correct {@link ValueType}
@@ -20,4 +22,10 @@ public interface ValueParser {
     Optional<Object> parseValue(String code);
     
     List<Object> parseMultiValue(String code);
+    
+    /**
+     * Puts the value to stack of the method.
+     * @param mv Method visitor.
+     */
+    void visitMethod(MethodVisitor mv, Object value);
 }

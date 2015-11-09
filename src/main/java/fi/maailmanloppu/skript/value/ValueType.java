@@ -3,6 +3,8 @@ package fi.maailmanloppu.skript.value;
 import java.util.List;
 import java.util.Optional;
 
+import org.objectweb.asm.MethodVisitor;
+
 /**
  * Type of a value, which can be defined using a script. Contains parsing for that type of value
  * (returning Object).
@@ -27,4 +29,10 @@ public interface ValueType {
     Optional<Object> parseValue(String code);
     
     List<Object> parseMultiValue(String code);
+    
+    /**
+     * Puts the value to stack of the method.
+     * @param mv Method visitor.
+     */
+    void visitMethod(MethodVisitor mv, Object value);
 }

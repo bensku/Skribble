@@ -3,9 +3,11 @@ package fi.maailmanloppu.skript.value;
 import java.util.List;
 import java.util.Optional;
 
+import org.objectweb.asm.MethodVisitor;
+
 /**
  * A simple value parser, which calls for {@link ValueType}s.
- * @author Benjami
+ * @author bensku
  *
  */
 public class SimpleValueParser implements ValueParser {
@@ -35,6 +37,12 @@ public class SimpleValueParser implements ValueParser {
     public List<Object> parseMultiValue(String code) {
         //TODO Multi value support
         return null;
+    }
+
+    @Override
+    public void visitMethod(MethodVisitor mv, Object value) {
+        // TODO Auto-generated method stub
+        
     }
     
     
