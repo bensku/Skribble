@@ -11,13 +11,11 @@ public class Skript {
     private static Skript instance;
     
     private ValueParser valueParser;
-    private ValueParser parser2;
     
     public Skript() {
         instance = this;
         
         valueParser = new SimpleValueParser();
-        valueParser = parser2;
     }
     
     public static Skript getPlugin() {

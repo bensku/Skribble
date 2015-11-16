@@ -31,7 +31,7 @@ public class GenericEnvironment implements Environment, Opcodes {
 
     @Override
     public boolean setVariable(String id, Object value) {
-        checkArgument(id != null && id != "");
+        //checkArgument(id != null && id != "");
         variables.put(id, value);
         return true;
     }
@@ -67,20 +67,21 @@ public class GenericEnvironment implements Environment, Opcodes {
     }
 
     @Override
-    public String getVisitingName() {
+    public String getVisitingName() { //TODO Oops, not useful yet...
         return null;
     }
 
     @Override
     public boolean hasField(String name) {
-        // TODO Auto-generated method stub
-        return false;
+        checkArgument(name != null && name != "", "Variable name must be present");
+        return defines.containsKey(name);
     }
 
     @Override
     public Type getFieldType(String name) {
-        // TODO Auto-generated method stub
-        return null;
+        checkArgument(name != null && name != "", "Variable name must be present");
+        Class<?> c = defines.get(name);
+        return Type.getType(c);
     }
     
 }

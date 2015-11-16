@@ -31,4 +31,11 @@ public interface ExecuteContext {
      * @return Unique identifier
      */
     String getId();
+    
+    /**
+     * Gets local variable stack id based on source code id.
+     * @param id
+     * @return
+     */
+    int getLocalVar(String id);
 }

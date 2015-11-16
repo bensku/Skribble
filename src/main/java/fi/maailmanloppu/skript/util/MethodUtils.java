@@ -39,4 +39,18 @@ public class MethodUtils implements Opcodes {
             throw new IllegalArgumentException("Cannot put value to stack!");
         }
     }
+    
+    public void setLocal(Object obj, int stack) {
+        if (obj instanceof Integer) {
+            mv.visitVarInsn(ISTORE, stack);
+        } else if (obj instanceof Float) {
+            mv.visitVarInsn(FSTORE, stack);
+        } else if (obj instanceof Long) {
+            mv.visitVarInsn(LSTORE, stack);
+        } else if (obj instanceof Double) {
+            mv.visitVarInsn(DSTORE, stack);
+        } else {
+            mv.visitVarInsn(ASTORE, stack);
+        }
+    }
 }

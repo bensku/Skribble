@@ -1,5 +1,6 @@
 package fi.maailmanloppu.skript.value;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,7 +16,7 @@ public class SimpleValueParser implements ValueParser {
     private List<ValueType> valueTypes;
     
     public SimpleValueParser() {
-        
+        this.valueTypes = new ArrayList<ValueType>();
     }
     
     public void addValueType(ValueType type) {
@@ -23,27 +24,14 @@ public class SimpleValueParser implements ValueParser {
     }
 
     @Override
-    public Optional<Object> parseValue(String code) {
+    public Optional<ValueType> getValueType(String code) {
         for (ValueType type : valueTypes) {
             if (type.accepts(code)) {
-                return Optional.of(type.parseValue(code));
+                return Optional.of(type);
             }
         }
         
         return Optional.empty();
     }
-
-    @Override
-    public List<Object> parseMultiValue(String code) {
-        //TODO Multi value support
-        return null;
-    }
-
-    @Override
-    public void visitMethod(MethodVisitor mv, Object value) {
-        // TODO Auto-generated method stub
-        
-    }
-    
     
 }

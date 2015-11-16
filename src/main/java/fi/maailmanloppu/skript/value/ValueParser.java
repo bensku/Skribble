@@ -15,17 +15,10 @@ import org.objectweb.asm.MethodVisitor;
 public interface ValueParser {
     
     /**
-     * Parses a simple value to an object.
+     * Gets type of the given value (for parsing).
      * @param code Source code part
-     * @return Parsed value, or empty optional
+     * @return Type, or empty optional if corresponding one is not found
      */
-    Optional<Object> parseValue(String code);
+    Optional<ValueType> getValueType(String code);
     
-    List<Object> parseMultiValue(String code);
-    
-    /**
-     * Puts the value to stack of the method.
-     * @param mv Method visitor.
-     */
-    void visitMethod(MethodVisitor mv, Object value);
 }

@@ -15,6 +15,7 @@ import fi.maailmanloppu.skript.parser.skript.VariableFetcher;
 import fi.maailmanloppu.skript.util.LineParser;
 import fi.maailmanloppu.skript.util.MethodUtils;
 import fi.maailmanloppu.skript.value.ValueParser;
+import fi.maailmanloppu.skript.value.ValueType;
 
 public class SetVarProcessor implements EffectProcessor {
 
@@ -25,9 +26,10 @@ public class SetVarProcessor implements EffectProcessor {
             String varId = parser.findParts("set", "to");
             String newValue = parser.findParts("to", ""); //From "to" to end
             
-            Object valueObj = Skript.getPlugin().getValueParser().parseValue(newValue);
+            SetVarTask task = new SetVarTask(varId, newValue);
+            return Optional.of(task);
         }
-        return null;
+        return Optional.empty();
     }
     
     class SetVarTask implements CallTask, Opcodes {
@@ -35,11 +37,17 @@ public class SetVarProcessor implements EffectProcessor {
         private String varId;
         private String newValue;
         private ValueParser parser;
+        private ValueType type;
         
         public SetVarTask(String varId, String newValue) {
             this.varId = varId;
             this.newValue = newValue;
             this.parser = Skript.getPlugin().getValueParser();
+            
+            Optional<ValueType> type = parser.getValueType(newValue);
+            if (type.isPresent()) {
+                this.type = type.get();
+            }
         }
 
         @Override
@@ -47,7 +55,7 @@ public class SetVarProcessor implements EffectProcessor {
             VariableFetcher varFetcher = new VariableFetcher(varId, context);
             String cleanName = varFetcher.getCleanName();
             Environment env = context.getEnvironment();
-            Object valueObj = Skript.getPlugin().getValueParser().parseValue(newValue);
+            Object valueObj = type.parseValue(newValue);
             
             switch (varFetcher.getType()) {
             case GLOBAL:
@@ -66,15 +74,22 @@ public class SetVarProcessor implements EffectProcessor {
             VariableFetcher varFetcher = new VariableFetcher(varId, context);
             String cleanName = varFetcher.getCleanName();
             Environment env = context.getEnvironment();
-            
-            parser.visitMethod(mv, parser.parseValue(newValue)); //Parse and put to stack
+            MethodUtils utils = new MethodUtils(mv);
+            Object parsed = type.parseValue(newValue);
             
             switch (varFetcher.getType()) {
             case GLOBAL:
-                
+                mv.visitFieldInsn(GETFIELD, "fi/maailmanloppu/skript/env/GenericEnvironment", "variables", "Ljava/util/Map;");
+                utils.putToStack(cleanName);
+                type.visitMethod(mv, parsed); //Parse and put to stack
+                mv.visitVarInsn(ALOAD, 2);
+                mv.visitMethodInsn(INVOKEINTERFACE, "java/util/Map", "put", 
+                        "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;", true);
             case LOCAL:
-                mv.visitFieldInsn(PUTFIELD, env.getVisitingName(), context.getId() + cleanName,
-                        env.getFieldType(cleanName).getDescriptor());
+                type.visitMethod(mv, parsed); //Parse and put to stack
+                utils.setLocal(parsed, context.getLocalVar(cleanName));
+                //mv.visitFieldInsn(PUTFIELD, env.getVisitingName(), context.getId() + cleanName,
+                //        env.getFieldType(cleanName).getDescriptor());
             case PARAM:
                 break; //TODO Not possible
             }
