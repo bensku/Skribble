@@ -1,5 +1,6 @@
 package fi.maailmanloppu.skript.parser;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,7 +33,12 @@ public class CodeFunction implements Function {
         return name;
     }
     
-    public void parse(FunctionSyntax syntax) {
+    public List<CallTask> parse(FunctionSyntax syntax) {
+        List<CallTask> tasks = new ArrayList<CallTask>();
+        for (String line : code) {
+            tasks.addAll(syntax.getTasks(line));
+        }
         
+        return tasks;
     }
 }

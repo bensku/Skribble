@@ -8,7 +8,7 @@ import java.util.List;
  *
  */
 public interface Compiler {
-    void compile(List<String> code);
+    void compile(List<String> code, String name);
     
     
 }
