@@ -7,12 +7,12 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
-
-import com.sun.xml.internal.ws.org.objectweb.asm.Type;
+import org.objectweb.asm.Type;
 
 import fi.maailmanloppu.skript.env.Environment;
 import fi.maailmanloppu.skript.env.ExecuteContext;
 import fi.maailmanloppu.skript.env.FunctionContext;
+import fi.maailmanloppu.skript.env.GenericEnvironment;
 import fi.maailmanloppu.skript.parser.CallTask;
 import fi.maailmanloppu.skript.parser.CodeFunction;
 import fi.maailmanloppu.skript.parser.Function;
@@ -34,6 +34,7 @@ public class DefaultCompiler implements Compiler, Opcodes {
     public void compile(List<String> code, String name) {
         ParsedScript script = parser.parseScript(code);
         List<Function> functions = script.getFunctions();
+        Environment env = new GenericEnvironment();
         
         ClassWriter cw = new ClassWriter(ASM5 + ClassWriter.COMPUTE_MAXS);
         
@@ -44,7 +45,7 @@ public class DefaultCompiler implements Compiler, Opcodes {
         for (Function func : functions) {
             if (func instanceof CodeFunction) {
                 List<CallTask> tasks = ((CodeFunction) func).parse(syntax);
-                
+                createMethod(cw, func.getName(), tasks, env);
             }
         }
     }
@@ -52,7 +53,7 @@ public class DefaultCompiler implements Compiler, Opcodes {
     public void createMethod(ClassWriter cw, String name, List<CallTask> tasks, Environment env) {
         ExecuteContext context = new FunctionContext(env, name, new ArrayList<String>());
         
-        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, name, "()V", null, null); //TODO Fix void type
+        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, name, Type.getMethodDescriptor(null, null), null, null); //TODO Fix void type
         mv.visitCode();
         for (CallTask task : tasks) {
             task.visitMethod(mv, context);

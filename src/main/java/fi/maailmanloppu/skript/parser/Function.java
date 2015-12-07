@@ -1,6 +1,9 @@
 package fi.maailmanloppu.skript.parser;
 
+import java.util.List;
 import java.util.Optional;
+
+import org.objectweb.asm.Type;
 
 /**
  * Base of functions.
@@ -22,4 +25,8 @@ public interface Function {
      * @return Name of function or empty string
      */
     public String getName();
+    
+    public List<Type> getParamTypes();
+    
+    public Type getReturnType();
 }

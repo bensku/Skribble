@@ -9,7 +9,6 @@ import fi.maailmanloppu.skript.Skript;
 import fi.maailmanloppu.skript.env.Environment;
 import fi.maailmanloppu.skript.env.ExecuteContext;
 import fi.maailmanloppu.skript.parser.CallTask;
-import fi.maailmanloppu.skript.parser.VariableType;
 import fi.maailmanloppu.skript.parser.skript.EffectProcessor;
 import fi.maailmanloppu.skript.parser.skript.VariableFetcher;
 import fi.maailmanloppu.skript.util.LineParser;
@@ -79,12 +78,12 @@ public class SetVarProcessor implements EffectProcessor {
             
             switch (varFetcher.getType()) {
             case GLOBAL:
-                mv.visitFieldInsn(GETFIELD, "fi/maailmanloppu/skript/env/GenericEnvironment", "variables", "Ljava/util/Map;");
+                mv.visitFieldInsn(GETFIELD, "fi/maailmanloppu/skript/env/GenericEnvironment", "env", "Ljava/util/Map;");
                 utils.putToStack(cleanName);
                 type.visitMethod(mv, parsed); //Parse and put to stack
-                mv.visitVarInsn(ALOAD, 2);
                 mv.visitMethodInsn(INVOKEINTERFACE, "java/util/Map", "put", 
                         "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;", true);
+                mv.visitInsn(POP2);
             case LOCAL:
                 type.visitMethod(mv, parsed); //Parse and put to stack
                 utils.setLocal(parsed, context.getLocalVar(cleanName));
