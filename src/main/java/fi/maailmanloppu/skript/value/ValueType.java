@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import org.objectweb.asm.MethodVisitor;
 
-import fi.maailmanloppu.skript.util.MethodUtils;
+import fi.maailmanloppu.skript.env.ExecuteContext;
 
 /**
  * Type of a value, which can be defined using a script. Contains parsing for that type of value
@@ -33,9 +33,21 @@ public interface ValueType {
     List<Object> parseMultiValue(String code);
     
     /**
-     * Puts the value to stack of the method.
-     * @param mv Method visitor.
+     * Puts the value to stack of the method. Can't handle variable references.
+     * @param mv Method visitor
+     * @param value Value of this type
      */
     void visitMethod(MethodVisitor mv, Object value);
+    
+    /**
+     * Puts value to stack of the method. If needed, handles variable
+     * references.
+     * @param mv Method visitor
+     * @param value Value of this type
+     * @param context Execute context, for handling variable references
+     */
+    default void visitMethod(MethodVisitor mv, Object value, ExecuteContext context) {
+        this.visitMethod(mv, value); //ReferenceType overrides this
+    }
     
 }

@@ -23,7 +23,7 @@ public class CodeFunction implements Function {
     public CodeFunction(String name, List<String> code, List<Type> params, Type ret) {
         checkNotNull(name, "Function name cannot be null!");
         checkNotNull(code, "Function source code cannot be null!");
-        checkNotNull(params, "Function parameters cannot be null, use VOID type!");
+        checkNotNull(params, "Function parameters cannot be null, use empty list!");
         checkNotNull(ret, "Function return cannot be null, use VOID type!");
         this.code = code;
         this.name = name;

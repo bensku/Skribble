@@ -74,7 +74,7 @@ public class SetVarProcessor implements EffectProcessor {
             String cleanName = varFetcher.getCleanName();
             Environment env = context.getEnvironment();
             MethodUtils utils = new MethodUtils(mv);
-            Object parsed = type.parseValue(newValue);
+            Optional<Object> parsed = type.parseValue(newValue);
             
             switch (varFetcher.getType()) {
             case GLOBAL:
@@ -83,14 +83,13 @@ public class SetVarProcessor implements EffectProcessor {
                 type.visitMethod(mv, parsed); //Parse and put to stack
                 mv.visitMethodInsn(INVOKEINTERFACE, "java/util/Map", "put", 
                         "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;", true);
-                mv.visitInsn(POP2);
             case LOCAL:
                 type.visitMethod(mv, parsed); //Parse and put to stack
                 utils.setLocal(parsed, context.getLocalVar(cleanName));
                 //mv.visitFieldInsn(PUTFIELD, env.getVisitingName(), context.getId() + cleanName,
                 //        env.getFieldType(cleanName).getDescriptor());
             case PARAM:
-                break; //TODO Not possible
+                break; //TODO Not possible, maybe set function flag to merge params to locals when found?
             }
         }
     }

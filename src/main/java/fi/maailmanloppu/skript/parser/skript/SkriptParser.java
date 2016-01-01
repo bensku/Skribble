@@ -2,12 +2,18 @@ package fi.maailmanloppu.skript.parser.skript;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+import org.objectweb.asm.Type;
+
+import fi.maailmanloppu.skript.Skript;
 import fi.maailmanloppu.skript.parser.CodeFunction;
 import fi.maailmanloppu.skript.parser.Function;
 import fi.maailmanloppu.skript.parser.ParsedScript;
 import fi.maailmanloppu.skript.parser.Parser;
 import fi.maailmanloppu.skript.parser.SimpleScript;
+import fi.maailmanloppu.skript.parser.skript.event.EventFunction;
+import fi.maailmanloppu.skript.parser.skript.event.EventProvider;
 
 /**
  * Parser for Skript format scripts.
@@ -15,6 +21,16 @@ import fi.maailmanloppu.skript.parser.SimpleScript;
  *
  */
 public class SkriptParser implements Parser {
+    
+    private EventProvider eventProvider;
+    
+    /**
+     * Constructs new Skript parser.
+     * @param eventProvider Event provider, usually from an instance of {@link Skript}
+     */
+    public SkriptParser(EventProvider eventProvider) {
+        this.eventProvider = eventProvider;
+    }
     
     @Override
     public ParsedScript parseScript(List<String> code) {
@@ -25,7 +41,7 @@ public class SkriptParser implements Parser {
             String line = code.get(i);
             if (line.startsWith("on")) {
                 //New function is starting here!
-                if (!currentFunc .isEmpty()) {
+                if (!currentFunc.isEmpty()) {
                     functions.add(parseFunction(currentFunc));
                 }
                 currentFunc = new ArrayList<String>();
@@ -39,8 +55,16 @@ public class SkriptParser implements Parser {
     @Override
     public Function parseFunction(List<String> code) {
         String name = code.get(0);
+        Optional<EventFunction> eventFunc = eventProvider.provide(name);
+        
         code.remove(0); //TODO Check performance!
-        CodeFunction func = new CodeFunction(name, code);
+        CodeFunction func = null;
+        if (eventFunc.isPresent()) {
+            func = new CodeFunction(name, code, eventFunc.get().getParameters(), Type.VOID_TYPE); //Events won't return anything
+        } else {
+            throw new UnsupportedOperationException("Non event functions are not YET supported");
+            //TODO Non event functions, use invokedynamic?
+        }
         return func;
     }
 }

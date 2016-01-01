@@ -3,7 +3,6 @@ package fi.maailmanloppu.skript.compiler;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -45,20 +44,23 @@ public class DefaultCompiler implements Compiler, Opcodes {
         for (Function func : functions) {
             if (func instanceof CodeFunction) {
                 List<CallTask> tasks = ((CodeFunction) func).parse(syntax);
-                createMethod(cw, func.getName(), tasks, env);
+                createMethod(cw, func, tasks, env);
             }
         }
     }
     
-    public void createMethod(ClassWriter cw, String name, List<CallTask> tasks, Environment env) {
+    public void createMethod(ClassWriter cw, Function func, List<CallTask> tasks, Environment env) {
+        String name = func.getName();
         ExecuteContext context = new FunctionContext(env, name, new ArrayList<String>());
         
-        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, name, Type.getMethodDescriptor(null, null), null, null); //TODO Fix void type
+        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, name, Type.getMethodDescriptor(func.getReturnType(), 
+                (Type[]) func.getParamTypes().toArray()), null, null);
         mv.visitCode();
         for (CallTask task : tasks) {
             task.visitMethod(mv, context);
         }
         
+        mv.visitMaxs(0, 0); //COMPUTE_MAXS; these values are ignored but method must still called
         mv.visitEnd();
     }
 
