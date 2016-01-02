@@ -4,13 +4,20 @@ import java.util.List;
 import java.util.Optional;
 
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
+
+import fi.maailmanloppu.skript.env.Environment;
+import fi.maailmanloppu.skript.env.ExecuteContext;
+import fi.maailmanloppu.skript.parser.skript.VariableFetcher;
+import fi.maailmanloppu.skript.util.MethodUtils;
 
 /**
- * Value type for values which are actually references to variables. This is a hack, but makes so many things easier.
+ * Value type for values which are actually references to variables.
+ * This is a hack, but makes so many things easier.
  * @author bensku
  *
  */
-public class ReferenceType implements ValueType {
+public class ReferenceType implements ValueType, Opcodes {
 
     @Override
     public boolean accepts(String code) { //Per scripting language: override and check here
@@ -19,7 +26,7 @@ public class ReferenceType implements ValueType {
 
     @Override
     public Optional<Object> parseValue(String code) {
-        return Optional.of(code); //Keep original
+        return Optional.of(code); //Keep original; override if needed
     }
 
     @Override
@@ -31,6 +38,26 @@ public class ReferenceType implements ValueType {
     @Override
     public void visitMethod(MethodVisitor mv, Object value) {
         //This simply does NOT work
+    }
+    
+    @Override
+    public void visitMethod(MethodVisitor mv, Object value, ExecuteContext context) {
+        String varId = (String) value;
+        VariableFetcher varFetcher = new VariableFetcher(varId, context);
+        String cleanName = varFetcher.getCleanName();
+        MethodUtils utils = new MethodUtils(mv);
+        Environment env = context.getEnvironment();
+        
+        switch (varFetcher.getType()) {
+        case GLOBAL: //Get from map
+            mv.visitFieldInsn(GETFIELD, "fi/maailmanloppu/skript/env/GenericEnvironment", "env", "Ljava/util/Map;");
+            utils.putToStack(cleanName);
+            mv.visitMethodInsn(INVOKEINTERFACE, "java/util/Map", "get", "(Ljava/lang/Object;)Ljava/lang/Object;", true);
+        case LOCAL:
+            
+        case PARAM:
+            break;
+        }
     }
 
 }

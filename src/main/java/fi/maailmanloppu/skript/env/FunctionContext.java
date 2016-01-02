@@ -3,6 +3,10 @@ package fi.maailmanloppu.skript.env;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.objectweb.asm.Type;
+
+import fi.maailmanloppu.skript.var.LocalVariable;
+import fi.maailmanloppu.skript.var.SimpleLocalVariable;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkArgument;
 
@@ -53,6 +57,18 @@ public class FunctionContext implements ExecuteContext {
             locals.add(id);
             return locals.lastIndexOf(id);
         }
+    }
+
+    @Override
+    public LocalVariable getLocalVar1(String id) {
+        LocalVariable var = new SimpleLocalVariable(id, this);
+        return var;
+    }
+
+    @Override
+    public int getVarType(String id) {
+        // TODO Auto-generated method stub
+        return 0;
     }
 
 }

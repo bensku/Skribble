@@ -2,9 +2,13 @@ package fi.maailmanloppu.skript.env;
 
 import java.util.List;
 
+import org.objectweb.asm.Type;
+
+import fi.maailmanloppu.skript.var.LocalVariable;
+
 /**
  * Execution context.
- * @author Benjami
+ * @author bensku
  *
  */
 public interface ExecuteContext {
@@ -38,4 +42,19 @@ public interface ExecuteContext {
      * @return
      */
     int getLocalVar(String id);
+    
+    /**
+     * Gets handle of local variable with given id.
+     * @param id
+     * @return
+     */
+    LocalVariable getLocalVar1(String id);
+    
+    /**
+     * Gets type of variable with given id. If variable is not available, VOID is
+     * returned.
+     * @param id
+     * @return Type id, as int; use Type.TYPENAME for to compare
+     */
+    int getVarType(String id);
 }
