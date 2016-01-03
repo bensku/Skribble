@@ -21,4 +21,10 @@ public interface ValueParser {
      */
     Optional<ValueType> getValueType(String code);
     
+    /**
+     * Gets type, which is able to write given object to stack in bytecode.
+     * @param obj Any object
+     * @return Type, or empty optional if no type can handle object
+     */
+    Optional<ValueType> getVisitType(Object obj);
 }

@@ -37,4 +37,9 @@ public class StringType implements ValueType {
         new MethodUtils(mv).putToStack(value);
     }
 
+    @Override
+    public boolean canVisit(Object obj) {
+        return (obj instanceof String);
+    }
+
 }

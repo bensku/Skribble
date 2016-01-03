@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.objectweb.asm.Type;
 
+import fi.maailmanloppu.skript.Skript;
+import fi.maailmanloppu.skript.value.ValueParser;
 import fi.maailmanloppu.skript.var.LocalVariable;
 import fi.maailmanloppu.skript.var.SimpleLocalVariable;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -15,27 +17,21 @@ public class FunctionContext implements ExecuteContext {
     private List<String> locals;
     private String id;
     private Environment env;
-    private List<String> params;
+    private ValueParser valueParser;
     
-    public FunctionContext(Environment env, String id, List<String> params) {
+    public FunctionContext(Environment env, String id, ValueParser valueParser) {
         checkNotNull(locals, "Locals cannot be null. Pass empty list if you don't have any.");
         this.locals = new ArrayList<String>();
         checkArgument(id != null && id != "", "Context id must be present");
         this.id = id;
         checkNotNull(env, "Environment must be present");
         this.env = env;
-        checkNotNull(params, "Params cannot be null. Pass empty list if you don't have any.");
-        this.params = params;
+        this.valueParser = valueParser;
     }
     
     @Override
     public List<String> getLocals() {
         return locals;
-    }
-
-    @Override
-    public List<String> getParams() {
-        return params;
     }
 
     @Override
@@ -49,7 +45,7 @@ public class FunctionContext implements ExecuteContext {
     }
 
     @Override
-    public int getLocalVar(String id) {
+    public int getVarStack(String id) {
         checkArgument(id != null && id != "", "Variable id must be present");
         if (locals.contains(id)) {
             return locals.lastIndexOf(id);
@@ -60,8 +56,8 @@ public class FunctionContext implements ExecuteContext {
     }
 
     @Override
-    public LocalVariable getLocalVar1(String id) {
-        LocalVariable var = new SimpleLocalVariable(id, this);
+    public LocalVariable getLocalVar(String id) {
+        LocalVariable var = new SimpleLocalVariable(id, this, valueParser);
         return var;
     }
 

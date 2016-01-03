@@ -14,23 +14,20 @@ public class VariableFetcher {
     
     private String ref;
     private List<String> locals;
-    private List<String> params;
 
     
     /**
      * Creates new variable fetcher instance.
      * @param ref Reference, which needs parsing
      * @param locals List of cleaned variable names which are always locals
-     * @param params List of cleaned variable names which are parameter names
      */
-    public VariableFetcher(String ref, List<String> locals, List<String> params) {
+    public VariableFetcher(String ref, List<String> locals) {
         this.ref = ref;
         this.locals = locals;
-        this.params = params;
     }
     
     public VariableFetcher(String ref, ExecuteContext context) {
-        this(ref, context.getLocals(), context.getParams());
+        this(ref, context.getLocals());
     }
     
     public String getCleanName() {
@@ -45,15 +42,13 @@ public class VariableFetcher {
     
     /**
      * Checks the variable type.
-     * @return
+     * @return Type of variable
      */
     public VariableType getType() {
         String clean = getCleanName();
         
         if (clean.startsWith("_") || locals.contains(clean)) {
             return VariableType.LOCAL;
-        } else if (params.contains(clean)) {
-            return VariableType.PARAM;
         }
         
         return VariableType.GLOBAL;

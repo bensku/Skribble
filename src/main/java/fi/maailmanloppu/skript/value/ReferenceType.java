@@ -55,9 +55,12 @@ public class ReferenceType implements ValueType, Opcodes {
             mv.visitMethodInsn(INVOKEINTERFACE, "java/util/Map", "get", "(Ljava/lang/Object;)Ljava/lang/Object;", true);
         case LOCAL:
             
-        case PARAM:
-            break;
         }
+    }
+
+    @Override
+    public boolean canVisit(Object obj) {
+        return false; //Since you can already provide the name as string...
     }
 
 }

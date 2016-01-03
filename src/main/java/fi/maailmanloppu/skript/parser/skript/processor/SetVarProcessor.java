@@ -85,7 +85,7 @@ public class SetVarProcessor implements EffectProcessor {
                         "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;", true);
             case LOCAL:
                 type.visitMethod(mv, parsed); //Parse and put to stack
-                utils.setLocal(parsed, context.getLocalVar(cleanName));
+                utils.setLocal(parsed, context.getVarStack(cleanName));
                 //mv.visitFieldInsn(PUTFIELD, env.getVisitingName(), context.getId() + cleanName,
                 //        env.getFieldType(cleanName).getDescriptor());
             case PARAM:

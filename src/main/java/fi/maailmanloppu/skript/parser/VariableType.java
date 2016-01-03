@@ -9,10 +9,5 @@ public enum VariableType {
     /**
      * Variable is defined as static field.
      */
-    LOCAL,
-    
-    /**
-     * Variable is parameter of function, thus static.
-     */
-    PARAM
+    LOCAL
 }

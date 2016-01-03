@@ -19,9 +19,17 @@ public interface ValueType {
      * Checks if this is correct parser for the argument. If parsing multi value,
      * pass the first line, that <i>should</i> be enough to identify.
      * @param code Source code part
-     * @return True if value can be accepted, false otherwise.
+     * @return True if value can be accepted, false otherwise
      */
     boolean accepts(String code);
+    
+    /**
+     * Checks if this parser can write given value into bytecode using
+     * visitMethod. Naturally, actual parsing for object is not needed.
+     * @param obj Object needed in stack
+     * @return True if object can be put to stack, false otherwise
+     */
+    boolean canVisit(Object obj);
     
     /**
      * Parses a simple value to an object.

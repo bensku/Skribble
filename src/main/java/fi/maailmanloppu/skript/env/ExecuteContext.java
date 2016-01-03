@@ -19,12 +19,6 @@ public interface ExecuteContext {
     List<String> getLocals();
     
     /**
-     * Gets list of parameter variable names.
-     * @return Parameter names
-     */
-    List<String> getParams();
-    
-    /**
      * Gets environment of this context.
      * @return Environment
      */
@@ -41,20 +35,21 @@ public interface ExecuteContext {
      * @param id
      * @return
      */
-    int getLocalVar(String id);
+    int getVarStack(String id);
     
     /**
      * Gets handle of local variable with given id.
      * @param id
      * @return
      */
-    LocalVariable getLocalVar1(String id);
+    LocalVariable getLocalVar(String id);
     
     /**
      * Gets type of variable with given id. If variable is not available, VOID is
      * returned.
      * @param id
-     * @return Type id, as int; use Type.TYPENAME for to compare
+     * @return Type id, as int; use Type.TYPENAME to compare
      */
     int getVarType(String id);
+    
 }

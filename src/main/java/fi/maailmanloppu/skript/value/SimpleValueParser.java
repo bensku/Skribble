@@ -33,5 +33,16 @@ public class SimpleValueParser implements ValueParser {
         
         return Optional.empty();
     }
+
+    @Override
+    public Optional<ValueType> getVisitType(Object obj) {
+        for (ValueType type : valueTypes) {
+            if (type.canVisit(obj)) {
+                return Optional.of(type);
+            }
+        }
+        
+        return Optional.empty();
+    }
     
 }

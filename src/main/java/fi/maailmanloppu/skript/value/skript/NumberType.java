@@ -40,4 +40,9 @@ public class NumberType implements ValueType {
         new MethodUtils(mv).putToStack(value);
     }
 
+    @Override
+    public boolean canVisit(Object obj) {
+        return ((obj instanceof Integer) || (obj instanceof Float) || (obj instanceof Double));
+    }
+
 }
