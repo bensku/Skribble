@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Type;
 
 import fi.maailmanloppu.skript.env.ExecuteContext;
 
@@ -57,5 +58,15 @@ public interface ValueType {
     default void visitMethod(MethodVisitor mv, Object value, ExecuteContext context) {
         this.visitMethod(mv, value); //ReferenceType overrides this
     }
+    
+    /**
+     * Gets type that is needed for fast local variables. By default, returns
+     * Type.OBJECT which can be used for everything but may
+     * not give best performance.
+     * @return Type number, as in Type class
+     */
+    default int getTypeGroup(Object obj) {
+        return Type.OBJECT;
+    };
     
 }

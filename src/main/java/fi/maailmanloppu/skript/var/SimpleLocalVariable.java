@@ -7,7 +7,6 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
 import fi.maailmanloppu.skript.env.ExecuteContext;
-import fi.maailmanloppu.skript.parser.skript.VariableFetcher;
 import fi.maailmanloppu.skript.value.ValueParser;
 import fi.maailmanloppu.skript.value.ValueType;
 
@@ -96,7 +95,7 @@ public class SimpleLocalVariable implements LocalVariable, Opcodes {
             opcode = ISTORE;
             break;
         case Type.FLOAT:
-            opcode = FLOAD;
+            opcode = FSTORE;
             break;
         case Type.LONG:
             opcode = LSTORE;
@@ -119,6 +118,7 @@ public class SimpleLocalVariable implements LocalVariable, Opcodes {
         int stack = context.getVarStack(id);
         
         mv.visitVarInsn(opcode, stack);
+        context.setVarType(id, type);
     }
 
     @Override
@@ -128,6 +128,7 @@ public class SimpleLocalVariable implements LocalVariable, Opcodes {
         if (!type.isPresent()) throw new UnsupportedOperationException("Given object is not of supported type.");
         
         type.get().visitMethod(mv, obj);
+        visitStore(mv, type.get().getTypeGroup(obj));
     }
 
 }

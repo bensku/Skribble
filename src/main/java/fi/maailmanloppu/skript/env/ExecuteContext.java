@@ -52,4 +52,11 @@ public interface ExecuteContext {
      */
     int getVarType(String id);
     
+    /**
+     * Sets type of variable with given id. Usually doing so should be immediately followed
+     * by writing variable of that type.
+     * @param id
+     * @param type
+     */
+    void setVarType(String id, int type);
 }

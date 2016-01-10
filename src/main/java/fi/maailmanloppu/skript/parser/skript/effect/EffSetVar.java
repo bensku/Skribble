@@ -1,4 +1,4 @@
-package fi.maailmanloppu.skript.parser.skript.processor;
+package fi.maailmanloppu.skript.parser.skript.effect;
 
 import java.util.Optional;
 
@@ -16,7 +16,7 @@ import fi.maailmanloppu.skript.util.MethodUtils;
 import fi.maailmanloppu.skript.value.ValueParser;
 import fi.maailmanloppu.skript.value.ValueType;
 
-public class SetVarProcessor implements EffectProcessor {
+public class EffSetVar implements EffectProcessor {
 
     @Override
     public Optional<CallTask> check(String line) {
@@ -61,8 +61,6 @@ public class SetVarProcessor implements EffectProcessor {
                 env.setVariable(cleanName, valueObj);
             case LOCAL:
                 env.setVariable(cleanName, valueObj); //TODO Need to fix this
-            case PARAM:
-                break; //TODO Not possible currently...
             }
             
             return Optional.empty();
@@ -84,12 +82,9 @@ public class SetVarProcessor implements EffectProcessor {
                 mv.visitMethodInsn(INVOKEINTERFACE, "java/util/Map", "put", 
                         "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;", true);
             case LOCAL:
-                type.visitMethod(mv, parsed); //Parse and put to stack
-                utils.setLocal(parsed, context.getVarStack(cleanName));
+                context.getLocalVar(cleanName).visitSet(mv, parsed);
                 //mv.visitFieldInsn(PUTFIELD, env.getVisitingName(), context.getId() + cleanName,
                 //        env.getFieldType(cleanName).getDescriptor());
-            case PARAM:
-                break; //TODO Not possible, maybe set function flag to merge params to locals when found?
             }
         }
     }

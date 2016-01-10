@@ -18,15 +18,18 @@ import fi.maailmanloppu.skript.parser.Function;
 import fi.maailmanloppu.skript.parser.FunctionSyntax;
 import fi.maailmanloppu.skript.parser.ParsedScript;
 import fi.maailmanloppu.skript.parser.Parser;
+import fi.maailmanloppu.skript.value.ValueParser;
 
 public class DefaultCompiler implements Compiler, Opcodes {
     
     private Parser parser;
     private FunctionSyntax syntax;
+    private ValueParser valueParser;
     
-    public DefaultCompiler(Parser parser, FunctionSyntax syntax) {
+    public DefaultCompiler(Parser parser, FunctionSyntax syntax, ValueParser valueParser) {
         this.parser = parser;
         this.syntax = syntax;
+        this.valueParser = valueParser;
     }
     
     @Override
@@ -51,7 +54,7 @@ public class DefaultCompiler implements Compiler, Opcodes {
     
     public void createMethod(ClassWriter cw, Function func, List<CallTask> tasks, Environment env) {
         String name = func.getName();
-        ExecuteContext context = new FunctionContext(env, name, new ArrayList<String>());
+        ExecuteContext context = new FunctionContext(env, name, valueParser);
         
         MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, name, Type.getMethodDescriptor(func.getReturnType(), 
                 (Type[]) func.getParamTypes().toArray()), null, null);

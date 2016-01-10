@@ -1,27 +1,30 @@
 package fi.maailmanloppu.skript.env;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.objectweb.asm.Type;
 
-import fi.maailmanloppu.skript.Skript;
 import fi.maailmanloppu.skript.value.ValueParser;
 import fi.maailmanloppu.skript.var.LocalVariable;
 import fi.maailmanloppu.skript.var.SimpleLocalVariable;
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkArgument;
 
 public class FunctionContext implements ExecuteContext {
     
     private List<String> locals;
+    private Map<String,Integer> types;
     private String id;
     private Environment env;
     private ValueParser valueParser;
     
     public FunctionContext(Environment env, String id, ValueParser valueParser) {
-        checkNotNull(locals, "Locals cannot be null. Pass empty list if you don't have any.");
         this.locals = new ArrayList<String>();
+        this.types = new HashMap<String,Integer>();
         checkArgument(id != null && id != "", "Context id must be present");
         this.id = id;
         checkNotNull(env, "Environment must be present");
@@ -63,8 +66,18 @@ public class FunctionContext implements ExecuteContext {
 
     @Override
     public int getVarType(String id) {
-        // TODO Auto-generated method stub
-        return 0;
+        Integer type = types.get(id);
+        
+        if (type == null) {
+            return Type.VOID;
+        }
+        
+        return type;
+    }
+
+    @Override
+    public void setVarType(String id, int type) {
+        types.put(id, type);
     }
 
 }
