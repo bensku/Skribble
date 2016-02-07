@@ -9,12 +9,12 @@ import fi.maailmanloppu.skript.Skript;
 import fi.maailmanloppu.skript.parser.CallTask;
 import fi.maailmanloppu.skript.parser.skript.EffectProcessor;
 import fi.maailmanloppu.skript.parser.skript.annotation.SkriptStatement;
-import fi.maailmanloppu.skript.util.SkriptPattern;
+import fi.maailmanloppu.skript.util.SkriptPatternOld;
 
 public interface SimpleEffect extends EffectProcessor {
     
     static Tuple<Boolean, List<String>> matchPattern(String pattern, String code) {
-        SkriptPattern parser = new SkriptPattern(pattern, code);
+        SkriptPatternOld parser = new SkriptPatternOld(pattern, code);
         Optional<List<String>> resultOptional = parser.parse();
         if (resultOptional.isPresent()) {
             List<String> result = resultOptional.get();
