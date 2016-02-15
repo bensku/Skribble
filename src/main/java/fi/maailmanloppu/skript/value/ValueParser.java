@@ -27,4 +27,11 @@ public interface ValueParser {
      * @return Type, or empty optional if no type can handle object
      */
     Optional<ValueType> getVisitType(Object obj);
+    
+    /**
+     * Gets value type for given pattern string.
+     * @param pattern String pattern
+     * @return Type, or empty optional if no type has equal pattern
+     */
+    Optional<ValueType> getPatternType(String pattern);
 }

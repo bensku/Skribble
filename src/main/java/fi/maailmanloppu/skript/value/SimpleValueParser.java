@@ -44,5 +44,16 @@ public class SimpleValueParser implements ValueParser {
         
         return Optional.empty();
     }
+
+    @Override
+    public Optional<ValueType> getPatternType(String pattern) {
+        for (ValueType type : valueTypes) {
+            if (type.getPattern().equals(pattern)) {
+                return Optional.of(type);
+            }
+        }
+        
+        return Optional.empty();
+    }
     
 }

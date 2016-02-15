@@ -8,9 +8,11 @@ import java.util.Optional;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 
+import fi.maailmanloppu.skript.parser.skript.annotation.TypeData;
 import fi.maailmanloppu.skript.util.MethodUtils;
 import fi.maailmanloppu.skript.value.ValueType;
 
+@TypeData(pattern = "num[ber][s]")
 public class NumberType implements ValueType {
 
     @Override

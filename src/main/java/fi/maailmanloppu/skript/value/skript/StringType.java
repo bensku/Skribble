@@ -5,14 +5,16 @@ import java.util.Optional;
 
 import org.objectweb.asm.MethodVisitor;
 
+import fi.maailmanloppu.skript.parser.skript.annotation.TypeData;
 import fi.maailmanloppu.skript.util.MethodUtils;
 import fi.maailmanloppu.skript.value.ValueType;
 
 /**
- * String value type. Translates into Java String.
+ * String/text value type. Translates into Java String.
  * @author bensku
  *
  */
+@TypeData(pattern = "(text|string)[s]")
 public class StringType implements ValueType {
 
     @Override

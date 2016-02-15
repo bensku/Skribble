@@ -7,6 +7,7 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 
 import fi.maailmanloppu.skript.env.ExecuteContext;
+import fi.maailmanloppu.skript.parser.skript.annotation.TypeData;
 
 /**
  * Type of a value, which can be defined using a script. Contains parsing for that type of value
@@ -67,6 +68,16 @@ public interface ValueType {
      */
     default int getTypeGroup(Object obj) {
         return Type.OBJECT;
-    };
+    }
+    
+    /**
+     * Gets pattern for this annotation. The format of pattern may vary
+     * between implementations.
+     * @return
+     */
+    default String getPattern() {
+        TypeData data = this.getClass().getAnnotation(TypeData.class);
+        return data.pattern();
+    }
     
 }

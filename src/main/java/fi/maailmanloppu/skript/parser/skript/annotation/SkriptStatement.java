@@ -18,4 +18,9 @@ public @interface SkriptStatement {
      * Given names will be used for function context variable names.
      */
     String[] variables();
+    
+    /**
+     * Skript variable type names, from left to right.
+     */
+    String[] types();
 }
