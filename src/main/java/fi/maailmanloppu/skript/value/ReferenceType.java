@@ -63,4 +63,9 @@ public class ReferenceType implements ValueType, Opcodes {
         return false; //Since you can already provide the name as string...
     }
 
+    @Override
+    public boolean matches(String id) {
+        return true; //Reference type has to match, always... TODO Checking must be done elsewhere
+    }
+
 }

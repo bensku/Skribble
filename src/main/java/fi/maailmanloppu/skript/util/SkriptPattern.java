@@ -1,9 +1,14 @@
 package fi.maailmanloppu.skript.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+
+import fi.maailmanloppu.skript.value.ValueParser;
+import fi.maailmanloppu.skript.value.ValueType;
 
 /**
  * Skript pattern utils.
@@ -12,31 +17,46 @@ import java.util.Map;
  */
 public class SkriptPattern {
     
-    private static Map<String,SkriptPattern> cache = new HashMap<String,SkriptPattern>();
+    private static Map<ValueParser,Map<String,SkriptPattern>> cache = new HashMap<>();
+    private static ValueParser defaultParser;
     
     /**
      * Creates new Skript pattern which can then be matched.
      * @param pattern Pattern text
+     * @param parser Value parser for variable parsing
      */
-    public static SkriptPattern of(String pattern) {
-        if (cache.containsKey(pattern)) {
-            return cache.get(pattern);
-        } else {
-            return new SkriptPattern(pattern);
+    public static SkriptPattern of(String pattern, ValueParser parser) {
+        if (cache.containsKey(parser)) {
+            Map<String,SkriptPattern> correct = cache.get(parser);
+            if (correct.containsKey(pattern)) return correct.get(pattern);
         }
+        
+        return new SkriptPattern(pattern, parser);
+    }
+    
+    public static SkriptPattern of(String pattern) {
+        return of(pattern, defaultParser);
+    }
+    
+    public static void setDefaultParser(ValueParser parser) {
+        defaultParser = parser;
     }
     
     private boolean parsed = false;
     private String str;
     private Section section;
     
+    private ValueParser varParser;
+    
     /**
      * Internal initializer.
      * @param pattern Pattern text
      */
-    private SkriptPattern(String pattern) {
+    private SkriptPattern(String pattern, ValueParser parser) {
         this.str = pattern;
-        cache.put(pattern, this); //Cache pattern so only one parse is needed
+        Map<String,SkriptPattern> correct = cache.getOrDefault(parser, new HashMap<String,SkriptPattern>());
+        correct.put(pattern, this);
+        cache.put(parser, correct); //Cache pattern so only one parse is needed
     }
     
     /**
@@ -59,7 +79,7 @@ public class SkriptPattern {
         boolean grpMode = false;
         int freeStart = 0; //Outside of sections or groups
         
-        boolean isVar = false;
+        boolean varMode = false;
         int varStart = 0;
         
         Section sec = new Section();
@@ -74,7 +94,7 @@ public class SkriptPattern {
             }
             
             if (!escape) {
-                if (!optMode && !grpMode) {
+                if (!optMode && !grpMode && !varMode) {
                     switch (c) {
                     case '[':
                         optStart = i;
@@ -84,6 +104,11 @@ public class SkriptPattern {
                     case '(':
                         grpStart = i;
                         grpMode = true;
+                        sec.childs.add(parseSection(partStr.substring(freeStart + 1, i), false));
+                        plainText = false;
+                    case '%':
+                        varStart = i;
+                        varMode = true;
                         sec.childs.add(parseSection(partStr.substring(freeStart + 1, i), false));
                         plainText = false;
                     }
@@ -101,15 +126,12 @@ public class SkriptPattern {
                         grpMode = false;
                         freeStart = i;
                     }
-                }
-                
-                if (c == '%') {
-                    if (isVar) {
-                        sec.variables.add(str.substring(varStart, i));
-                        isVar = false;
-                    } else {
-                        varStart = i + 1;
-                        isVar = true;
+                } else if (varMode) {
+                    if (c == '%') {
+                        Section child = parseVariable(partStr.substring(varStart, i));
+                        sec.childs.add(child);
+                        varMode = false;
+                        freeStart = i;
                     }
                 }
                 
@@ -125,7 +147,7 @@ public class SkriptPattern {
         return sec;
     }
     
-    public Section parseGroup(String grpStr) {
+    private Section parseGroup(String grpStr) {
         Group group = new Group();
         
         String[] optStrs = grpStr.split("|");
@@ -135,6 +157,13 @@ public class SkriptPattern {
         }
         
         return group;
+    }
+    
+    private Section parseVariable(String varStr) {
+        Variable var = new Variable();
+        var.types = Arrays.asList(varStr.split("/"));
+        
+        return var;
     }
     
     /**
@@ -149,17 +178,21 @@ public class SkriptPattern {
         public boolean optional = false;
         public List<Section> childs = new ArrayList<Section>();
         public String text;
-        public List<String> variables;
     }
     
     /**
-     * Group is subclass of section, which also has optional parts.
+     * Group is a section, which also has optional parts.
      * @author bensku
      *
      */
     class Group extends Section {
         
         public List<Section> options = new ArrayList<Section>();
+    }
+    
+    class Variable extends Section {
+        
+        public List<String> types = new ArrayList<String>();
     }
     
     public class MatchResult {
@@ -201,11 +234,20 @@ public class SkriptPattern {
                 SectionResult result = matchSection(opt, part);
                 if (result.success) return result;
             }
+        } else if (sec instanceof Variable) {
+            
+            for (String name : ((Variable) sec).types) {
+                Optional<ValueType> optType = varParser.getPatternType(name);
+                if (!optType.isPresent()) throw new ClassCastException("Skribble type " + name + " not found!");
+                
+                ValueType type = optType.get();
+                
+            }
         }
         
         int offset = 0;
         for (Section child : sec.childs) {
-            SectionResult result = matchSection(child, part.substring(offset - 1));
+            SectionResult result = matchSection(child, part.substring(offset));
             
             if (result.success) {
                 offset += result.offset;

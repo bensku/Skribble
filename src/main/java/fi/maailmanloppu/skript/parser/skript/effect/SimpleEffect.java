@@ -18,7 +18,7 @@ public interface SimpleEffect extends EffectProcessor {
         String pattern = statement.pattern();
         SkriptPattern parser = SkriptPattern.of(pattern);
         parser.parse();
-        int result = parser.match(line);
+        int result = 0; //TODO Rewrite this
         if (result != SkriptPattern.MatchResult.ALLOW) return Optional.empty();
         
         List<String> vars = parser.findVariables();

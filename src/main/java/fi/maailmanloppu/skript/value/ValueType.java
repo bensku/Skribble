@@ -8,6 +8,7 @@ import org.objectweb.asm.Type;
 
 import fi.maailmanloppu.skript.env.ExecuteContext;
 import fi.maailmanloppu.skript.parser.skript.annotation.TypeData;
+import fi.maailmanloppu.skript.util.SkriptPattern;
 
 /**
  * Type of a value, which can be defined using a script. Contains parsing for that type of value
@@ -71,13 +72,10 @@ public interface ValueType {
     }
     
     /**
-     * Gets pattern for this annotation. The format of pattern may vary
-     * between implementations.
-     * @return
+     * Check if this is correct type for given identifier. By default,
+     * always returns false. Implementation/scripting language specific.
+     * @return True, if given type id is correct.
      */
-    default String getPattern() {
-        TypeData data = this.getClass().getAnnotation(TypeData.class);
-        return data.pattern();
-    }
+    boolean matches(String id);
     
 }
