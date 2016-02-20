@@ -26,10 +26,10 @@ public abstract class SimpleType implements ValueType {
      */
     public static Optional<String> findBetween(String content, String start, String end) {
         int pos1 = content.indexOf(start) + start.length();
-        int pos2 = content.indexOf(end);
+        int pos2 = content.indexOf(end, pos1);
         
         if (pos1 == -1 || pos2 == -1) return Optional.empty();
-        return Optional.of(content.substring(pos1, pos2));
+        return Optional.ofNullable(content.substring(pos1, pos2));
     }
     
     protected String pattern;
@@ -59,7 +59,7 @@ public abstract class SimpleType implements ValueType {
     }
 
     @Override
-    public abstract Optional<Object> parseValue(String code);
+    public abstract ParseResult parseValue(String code);
 
     @Override
     public abstract List<Object> parseMultiValue(String code);

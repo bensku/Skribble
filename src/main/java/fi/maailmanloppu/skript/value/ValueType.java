@@ -39,7 +39,7 @@ public interface ValueType {
      * @param code Source code part
      * @return Parsed value, or empty optional
      */
-    Optional<Object> parseValue(String code);
+    ParseResult parseValue(String code);
     
     List<Object> parseMultiValue(String code);
     

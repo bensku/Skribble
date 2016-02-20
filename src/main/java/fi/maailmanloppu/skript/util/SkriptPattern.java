@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import fi.maailmanloppu.skript.value.ParseResult;
 import fi.maailmanloppu.skript.value.ValueParser;
 import fi.maailmanloppu.skript.value.ValueType;
 
@@ -219,6 +220,7 @@ public class SkriptPattern {
         
         public int offset = 0;
         public boolean success = false;
+        public Object varValue;
     }
     
     public SectionResult matchSection(Section sec, String part) {
@@ -235,13 +237,32 @@ public class SkriptPattern {
                 if (result.success) return result;
             }
         } else if (sec instanceof Variable) {
+            boolean acceptOne = false;
+            int offset = 0;
+            Object acceptedValue = null;
             
             for (String name : ((Variable) sec).types) {
                 Optional<ValueType> optType = varParser.getPatternType(name);
                 if (!optType.isPresent()) throw new ClassCastException("Skribble type " + name + " not found!");
                 
                 ValueType type = optType.get();
-                
+                if (type.accepts(part)) {
+                    ParseResult parse = type.parseValue(part);
+                    acceptOne = true;
+                    if (parse.isPresent()) {
+                        acceptedValue = parse.get();
+                    }
+                    offset = parse.getOffset();
+                    break;
+                }
+            }
+            
+            if (acceptOne) {
+                SectionResult result = new SectionResult();
+                result.offset = offset;
+                result.success = true;
+                result.varValue = acceptedValue;
+                return result;
             }
         }
         

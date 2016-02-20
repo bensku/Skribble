@@ -7,6 +7,8 @@ import org.objectweb.asm.MethodVisitor;
 
 import fi.maailmanloppu.skript.parser.skript.annotation.TypeData;
 import fi.maailmanloppu.skript.util.MethodUtils;
+import fi.maailmanloppu.skript.value.ParseResult;
+import fi.maailmanloppu.skript.value.SimpleType;
 import fi.maailmanloppu.skript.value.ValueType;
 
 /**
@@ -14,18 +16,17 @@ import fi.maailmanloppu.skript.value.ValueType;
  * @author bensku
  *
  */
-@TypeData(pattern = "(text|string)[s]")
-public class StringType implements ValueType {
+@TypeData(pattern = "(text|string)[s]", start = "\"", end = "\"")
+public class StringType extends SimpleType {
 
     @Override
-    public boolean accepts(String code) {
-        if (code.startsWith("\"")) return true;
-        return false;
-    }
-
-    @Override
-    public Optional<Object> parseValue(String code) {
-        return Optional.ofNullable(code.replace("\"", "")); //TODO what about escaping as \"?
+    public ParseResult parseValue(String code) {
+        Optional<String> str = findBetween(code, "\"", "\"");
+        if (str.isPresent()) {
+            return ParseResult.of(str.get(), str.get().length());
+        }
+        
+        return ParseResult.empty();
     }
 
     @Override

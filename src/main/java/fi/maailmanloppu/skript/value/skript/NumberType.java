@@ -8,31 +8,33 @@ import java.util.Optional;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 
+import fi.maailmanloppu.skript.Skript;
 import fi.maailmanloppu.skript.parser.skript.annotation.TypeData;
 import fi.maailmanloppu.skript.util.MethodUtils;
+import fi.maailmanloppu.skript.value.ParseResult;
+import fi.maailmanloppu.skript.value.SimpleType;
 import fi.maailmanloppu.skript.value.ValueType;
 
 @TypeData(pattern = "num[ber][s]")
-public class NumberType implements ValueType {
+public class NumberType extends SimpleType {
 
     @Override
     public boolean accepts(String code) {
-        try {
-            NumberFormat.getInstance().parse(code);
-        } catch (ParseException e) {
-            return false;
-        }
-        
-        return true;
+        return Character.isDigit(code.charAt(0));
     }
 
     @Override
-    public Optional<Object> parseValue(String code) {
-        try {
-            return Optional.of(NumberFormat.getInstance().parse(code));
-        } catch (ParseException e) {
-            return Optional.empty();
+    public ParseResult parseValue(String code) {
+        String[] numbers = code.replaceAll("[^-?0-9]+", " ").split(" ");
+        if (numbers.length > 0) {
+            try {
+                return ParseResult.of(NumberFormat.getInstance().parse(numbers[0]), numbers[0].length());
+            } catch (ParseException e) {
+                Skript.getPlugin().getLogger().warn("Could not parse number " + numbers[0]);
+            }
         }
+        
+        return ParseResult.empty();
     }
 
     @Override

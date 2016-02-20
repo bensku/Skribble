@@ -25,8 +25,8 @@ public class ReferenceType implements ValueType, Opcodes {
     }
 
     @Override
-    public Optional<Object> parseValue(String code) {
-        return Optional.of(code); //Keep original; override if needed
+    public ParseResult parseValue(String code) {
+        return ParseResult.of(code, code.length()); //Keep original; override if needed
     }
 
     @Override
