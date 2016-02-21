@@ -7,11 +7,11 @@ import java.util.Optional;
 import org.objectweb.asm.Type;
 
 import fi.maailmanloppu.skript.Skript;
-import fi.maailmanloppu.skript.parser.CodeFunction;
-import fi.maailmanloppu.skript.parser.Function;
 import fi.maailmanloppu.skript.parser.ParsedScript;
 import fi.maailmanloppu.skript.parser.Parser;
 import fi.maailmanloppu.skript.parser.SimpleScript;
+import fi.maailmanloppu.skript.parser.block.CodeFunction;
+import fi.maailmanloppu.skript.parser.block.Function;
 import fi.maailmanloppu.skript.parser.skript.event.EventFunction;
 import fi.maailmanloppu.skript.parser.skript.event.EventProvider;
 
@@ -37,9 +37,10 @@ public class SkriptParser implements Parser {
         List<Function> functions = new ArrayList<Function>();
         List<String> currentFunc = new ArrayList<String>();
         
+        String indentation = "    "; //Assume 4 spaces indentation; most common and recommended
         for (int i = 0; i < code.size(); i++) {
             String line = code.get(i);
-            if (line.startsWith("on")) {
+            if (!line.startsWith(indentation)) {
                 //New function is starting here!
                 if (!currentFunc.isEmpty()) {
                     functions.add(parseFunction(currentFunc));

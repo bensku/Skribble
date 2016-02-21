@@ -3,6 +3,8 @@ package fi.maailmanloppu.skript.parser;
 import java.util.ArrayList;
 import java.util.List;
 
+import fi.maailmanloppu.skript.parser.block.Function;
+
 /**
  * Simple parsed script.
  * @author bensku

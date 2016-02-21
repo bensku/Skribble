@@ -1,4 +1,4 @@
-package fi.maailmanloppu.skript.parser;
+package fi.maailmanloppu.skript.parser.block;
 
 import java.util.List;
 import java.util.Optional;
@@ -10,7 +10,7 @@ import org.objectweb.asm.Type;
  * @author bensku
  *
  */
-public interface Function {
+public interface Function extends CodeBlock {
     
     /**
      * Calls function. Remember, calling functions from Java is usually bad

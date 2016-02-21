@@ -1,4 +1,4 @@
-package fi.maailmanloppu.skript.parser;
+package fi.maailmanloppu.skript.parser.block;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,6 +6,8 @@ import java.util.Optional;
 
 import org.objectweb.asm.Type;
 
+import fi.maailmanloppu.skript.parser.CallTask;
+import fi.maailmanloppu.skript.parser.FunctionSyntax;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -58,5 +60,10 @@ public class CodeFunction implements Function {
     @Override
     public Type getReturnType() {
         return ret;
+    }
+
+    @Override
+    public List<CodeBlock> getChildren() {
+        return null;
     }
 }

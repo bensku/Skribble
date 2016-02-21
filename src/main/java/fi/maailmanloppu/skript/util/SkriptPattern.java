@@ -232,15 +232,15 @@ public class SkriptPattern {
         }
         
         if (sec instanceof Group) {
+            SectionResult result = new SectionResult();
             for (Section opt : ((Group) sec).options) {
-                SectionResult result = matchSection(opt, part);
-                if (result.success) return result;
+                result = matchSection(opt, part);
+                if (result.success) break;
             }
-        } else if (sec instanceof Variable) {
-            boolean acceptOne = false;
-            int offset = 0;
-            Object acceptedValue = null;
             
+            return result;
+        } else if (sec instanceof Variable) {
+            SectionResult result = new SectionResult();
             for (String name : ((Variable) sec).types) {
                 Optional<ValueType> optType = varParser.getPatternType(name);
                 if (!optType.isPresent()) throw new ClassCastException("Skribble type " + name + " not found!");
@@ -248,22 +248,16 @@ public class SkriptPattern {
                 ValueType type = optType.get();
                 if (type.accepts(part)) {
                     ParseResult parse = type.parseValue(part);
-                    acceptOne = true;
+                    result.success = true;
                     if (parse.isPresent()) {
-                        acceptedValue = parse.get();
+                        result.varValue = parse.get();
                     }
-                    offset = parse.getOffset();
+                    result.offset = parse.getOffset();
                     break;
                 }
             }
             
-            if (acceptOne) {
-                SectionResult result = new SectionResult();
-                result.offset = offset;
-                result.success = true;
-                result.varValue = acceptedValue;
-                return result;
-            }
+            return result;
         }
         
         int offset = 0;

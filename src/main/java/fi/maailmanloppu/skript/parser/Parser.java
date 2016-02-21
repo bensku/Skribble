@@ -2,6 +2,8 @@ package fi.maailmanloppu.skript.parser;
 
 import java.util.List;
 
+import fi.maailmanloppu.skript.parser.block.Function;
+
 /**
  * Abstract script parser...
  * @author bensku

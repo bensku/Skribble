@@ -13,11 +13,11 @@ import fi.maailmanloppu.skript.env.ExecuteContext;
 import fi.maailmanloppu.skript.env.FunctionContext;
 import fi.maailmanloppu.skript.env.GenericEnvironment;
 import fi.maailmanloppu.skript.parser.CallTask;
-import fi.maailmanloppu.skript.parser.CodeFunction;
-import fi.maailmanloppu.skript.parser.Function;
 import fi.maailmanloppu.skript.parser.FunctionSyntax;
 import fi.maailmanloppu.skript.parser.ParsedScript;
 import fi.maailmanloppu.skript.parser.Parser;
+import fi.maailmanloppu.skript.parser.block.CodeFunction;
+import fi.maailmanloppu.skript.parser.block.Function;
 import fi.maailmanloppu.skript.value.ValueParser;
 
 public class DefaultCompiler implements Compiler, Opcodes {

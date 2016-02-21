@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import fi.maailmanloppu.skript.parser.CallTask;
 import fi.maailmanloppu.skript.parser.FunctionSyntax;
+import fi.maailmanloppu.skript.parser.block.CodeBlock;
 
 /**
  * Function syntax for Skript.
@@ -41,5 +42,24 @@ public class SkriptSyntax implements FunctionSyntax {
      */
     public void addEffectProcessor(EffectProcessor processor) {
         processors.add(processor);
+    }
+
+    @Override
+    public CodeBlock parse(List<String> lines) {
+        char indentChar = ' ';
+        int indentMultip = 4;
+        List<Integer> indents = new ArrayList<Integer>();
+        for (int i = 0; i < lines.size(); i++) {
+            String line = lines.get(i);
+            
+            int indent = 0;
+            for (char c : line.toCharArray()) {
+                if (c != indentChar) break;
+                indent++;
+            }
+            indents.add(indent);
+        }
+        
+        return null;
     }
 }
